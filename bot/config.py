@@ -207,36 +207,59 @@ def _load_yaml(path: Path) -> Any:
         raise ConfigError(f"invalid YAML in {path}: {exc}") from exc
 
 
+def _bundled_config_dir() -> Path | None:
+    for candidate in (
+        Path("/app/config.defaults"),
+        Path(__file__).resolve().parents[1] / "config.defaults",
+        Path(__file__).resolve().parents[1] / "config",
+    ):
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
+def _resolve_config_file(config_dir: Path, relative: str) -> tuple[Any, Path]:
+    primary = config_dir / relative
+    if primary.is_file():
+        return _load_yaml(primary), primary
+    bundled = _bundled_config_dir()
+    if bundled is not None:
+        fallback = bundled / relative
+        if fallback.is_file():
+            log.warning("config file %s missing, falling back to %s", primary, fallback)
+            return _load_yaml(fallback), fallback
+    raise ConfigError(f"missing config file: {primary}")
+
+
 def load_yaml_bundle(config_dir: Path) -> LoadedYaml:
     if not config_dir.is_dir():
         raise ConfigError(f"CONFIG_DIR does not exist: {config_dir}")
-    paths = {
-        "permissions": config_dir / "permissions.yaml",
-        "i18n": config_dir / "i18n.yaml",
-        "limits": config_dir / "limits.yaml",
-    }
-    for path in paths.values():
-        if not path.is_file():
-            raise ConfigError(f"missing config file: {path}")
+    # Resolve each required file individually so a sparse bind-mount
+    # (e.g. host ./config only contains permissions.yaml) still boots
+    # by falling back to the baked-in defaults for the rest.
+    perm_data, perm_path = _resolve_config_file(config_dir, "permissions.yaml")
+    i18n_data, i18n_path = _resolve_config_file(config_dir, "i18n.yaml")
+    limits_data, limits_path = _resolve_config_file(config_dir, "limits.yaml")
+
     locales: dict[str, dict[str, Any]] = {}
     locale_paths: dict[str, Path] = {}
     for locale in SUPPORTED_LOCALES:
-        locale_path = config_dir / "locales" / f"{locale}.yaml"
-        locale_paths[locale] = locale_path
-        if not locale_path.is_file():
-            raise ConfigError(f"missing locale file: {locale_path}")
-        data = _load_yaml(locale_path)
+        rel = f"locales/{locale}.yaml"
+        data, resolved = _resolve_config_file(config_dir, rel)
         if not isinstance(data, dict):
-            raise ConfigError(f"{locale_path} must be a mapping")
+            raise ConfigError(f"{resolved} must be a mapping")
         locales[locale] = data
+        locale_paths[locale] = resolved
+
+    paths = {"permissions": perm_path, "i18n": i18n_path, "limits": limits_path}
     mtimes = {
         str(path): path.stat().st_mtime
         for path in [*paths.values(), *locale_paths.values()]
     }
     return LoadedYaml(
-        permissions=_parse_permissions(_load_yaml(paths["permissions"])),
-        i18n=_parse_i18n(_load_yaml(paths["i18n"])),
-        limits=_parse_limits(_load_yaml(paths["limits"])),
+        permissions=_parse_permissions(perm_data),
+        i18n=_parse_i18n(i18n_data),
+        limits=_parse_limits(limits_data),
         locales=locales,
         mtimes=mtimes,
     )

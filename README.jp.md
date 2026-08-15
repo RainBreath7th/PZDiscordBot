@@ -45,7 +45,8 @@
 > すでに Bot をお持ちの場合は手順 3 から進めてください。まだお持ちでない場合は手順 1 から始めてください。
 
 1. [第 1 章](#1-discord-bot-の作成と招待手順どおり)の手順どおりに Bot を作成し、`DISCORD_TOKEN` をコピーしてサーバーに招待します。
-2. Discord で**開発者モード**をオンにし、`guild_id` / ロール ID をコピーして（[3.2](#32-guild_id--role_id--user_id--channel_id-の取り方)を参照）`config/permissions.yaml` に記入します。
+2. ⚠️ **必須 — `config/permissions.yaml` を編集してください**：Discord で**開発者モード**をオンにし、`guild_id` / ロール ID をコピーして（[3.2](#32-guild_id--role_id--user_id--channel_id-の取り方)を参照）`config/permissions.yaml` に記入します。**初回起動前に必ず編集してください** — 未編集のまま起動すると Bot はオンラインになりますがスラッシュコマンドが一切表示されません（`guilds` が空 → 同期がスキップされ、ログに `no real guild ids ... skipped` と出ます）。
+   > 他のファイルはそのままで構いません：`config/i18n.yaml` / `config/limits.yaml` / `config/locales/*.yaml` は初回起動時にイメージ内の既定値から自動補完されます（`[entrypoint] seeding missing ...`）。ファイルがなくても `missing config file` で落ちることはありません。
 3. 環境変数ファイルをコピーして記入します：
 
    ```bash

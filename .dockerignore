@@ -10,5 +10,6 @@ tests
 .vscode
 .gitignore
 .dockerignore
-compose.bot.yaml
+compose*.yaml
 .env.example
+!docker-entrypoint.sh

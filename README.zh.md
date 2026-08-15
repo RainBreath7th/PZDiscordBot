@@ -45,7 +45,8 @@
 > 如果你已经有 Discord 机器人，直接跳到第 3 步。否则从第 1 步的“申请机器人”开始。
 
 1. 按[第 1 章](#1-discord-机器人申请与邀请手把手)申请机器人，拿到 `DISCORD_TOKEN`，并把机器人拉进你的 Discord 服务器。
-2. 在服务器里**开启开发者模式**并复制 `guild_id` / 角色 ID（见 [3.2](#32-如何拿到-guild_idrole_iduser_idchannel_id)），填到 `config/permissions.yaml`。
+2. ⚠️ **必做 — 配置 `config/permissions.yaml`**：在 Discord 里**开启开发者模式**并复制 `guild_id` / 角色 ID（见 [3.2](#32-如何拿到-guild_idrole_iduser_idchannel_id)），填到 `config/permissions.yaml`。**首次启动前必须改这个文件**，否则机器人能上线但没有任何斜杠命令（`guilds` 为空时 Bot 会跳过同步、日志提示 `no real guild ids ... skipped`）。
+   > 其他文件不用管：`config/i18n.yaml` / `config/limits.yaml` / `config/locales/*.yaml` 首次启动时会自动从镜像默认值补齐（`[entrypoint] seeding missing ...`），缺了也不会报 `missing config file`。
 3. 复制环境变量文件并填好：
 
    ```bash

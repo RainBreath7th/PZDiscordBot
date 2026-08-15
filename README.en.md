@@ -45,7 +45,8 @@ Other languages: [中文](README.zh.md) · [日本語](README.jp.md) · [Entry](
 > If you already have a bot, skip to step 3. Otherwise start at step 1.
 
 1. Follow [Chapter 1](#1-create-and-invite-the-discord-bot-step-by-step) to create a bot, copy `DISCORD_TOKEN`, and invite it to your server.
-2. Turn on **Developer Mode** in Discord and copy the `guild_id` / role IDs (see [3.2](#32-how-to-copy-guild_id--role_id--user_id--channel_id)) into `config/permissions.yaml`.
+2. ⚠️ **Required — configure `config/permissions.yaml`**: Turn on **Developer Mode** in Discord and copy the `guild_id` / role IDs (see [3.2](#32-how-to-copy-guild_id--role_id--user_id--channel_id)) into `config/permissions.yaml`. **You must edit this file before the first start** — otherwise the bot will come online but expose no slash commands (empty `guilds` → sync is skipped and the log says `no real guild ids ... skipped`).
+   > You can leave the rest alone: `config/i18n.yaml` / `config/limits.yaml` / `config/locales/*.yaml` are auto-seeded from the baked-in defaults on first boot (`[entrypoint] seeding missing ...`), so a missing file will not crash with `missing config file`.
 3. Copy and fill the env file:
 
    ```bash

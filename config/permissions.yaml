@@ -1,0 +1,14 @@
+# {guild_id as a quoted snowflake: settings}
+# Slash commands are synced only for guilds listed here. Restart pz-bot after adding a guild.
+guilds:
+  "000000000000000000":
+    admin_role_ids:
+      - "000000000000000001"
+    member_role_ids:
+      - "000000000000000002"
+    command_channel_ids: []
+    break_glass_user_ids: []
+    command_min_tier: {}
+    # Example override (uncomment to let Tier-B announce):
+    # command_min_tier:
+    #   announce: B

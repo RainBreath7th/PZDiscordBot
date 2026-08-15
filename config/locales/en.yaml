@@ -1,0 +1,86 @@
+error:
+  not_in_guild: "This command can only be used in a configured Discord server."
+  unknown_guild: "This server is not configured."
+  wrong_channel: "Use this command in an allowed operations channel."
+  insufficient_tier: "You do not have permission."
+  restarting: "The server is restarting. About {seconds}s of grace remaining."
+  rcon_failed: "RCON call failed: {detail}"
+  ambiguous_player: "Player name is ambiguous: {names}. Type the full character name."
+  unknown_player: "Player \"{name}\" was not found."
+  limit_exceeded: "{what} is out of range ({min}–{max})."
+  not_your_confirm: "This confirmation is not yours."
+  confirm_expired: "Confirmation expired."
+  cancelled: "Cancelled."
+  break_glass_required: "Changing a protected in-game admin requires BreakGlass."
+  not_configured: "Configuration is incomplete."
+confirm:
+  title: "Confirm"
+  now: "The server will be announced, saved, and stopped immediately."
+  kick: "Kick {player}. Reason: {reason}"
+  ban_user: "Ban user {player}."
+  ban_steamid: "Ban SteamID {steamid}."
+  unban_user: "Unban user {player}."
+  unban_steamid: "Unban SteamID {steamid}."
+  access: "Set {player} in-game access to {level}."
+  whitelist_remove: "Remove {player} from the whitelist."
+players:
+  title: "Online players"
+  empty: "No players are online."
+  count: "Online: {count}"
+  list: "Names: {names}"
+restart:
+  queued: "Restart queued. The server will save and quit when empty. Timeout {timeout}s."
+  already_queued: "A restart is already queued by {name} ({elapsed}s elapsed, {remaining}s left)."
+  cancelled_own: "Your queued restart was cancelled."
+  cancelled_other: "Cancelled the queued restart started by {name}."
+  cancel_denied: "You can only cancel your own queued restart."
+  nothing_to_cancel: "There is no queued restart."
+  status_idle: "No restart is queued and the server is not in a restarting window."
+  status_queued: "Queued by {name}. Elapsed {elapsed}s, {remaining}s left."
+  status_restarting: "Server is restarting. {seconds}s of grace remaining."
+  timeout: "Queued restart timed out and was cancelled. The server was not stopped."
+  rcon_failed_cancel: "RCON failed repeatedly while queued. Queue cancelled; server was not stopped."
+  save_failed: "Save failed; server was not stopped: {detail}"
+  quit_failed: "Quit failed; the server may still be running: {detail}"
+  preempted: "Your queued restart was preempted by a forced restart."
+  executed: "Save and quit were sent. Waiting for Docker to bring the server back."
+  now_started: "Forced restart started."
+  queued_ingame: "[PZ-Bot] A restart is queued. The server will save and quit when empty."
+  executing_ingame: "[PZ-Bot] Saving and restarting the server now."
+announce:
+  sent: "Announcement sent in-game for each configured GameLocale."
+save:
+  ok: "World saved."
+  failed: "Save failed: {detail}"
+kick:
+  done: "Kicked {player}."
+ban:
+  done_user: "Banned {player}."
+  done_steamid: "Banned SteamID {steamid}."
+unban:
+  done_user: "Unbanned {player}."
+  done_steamid: "Unbanned SteamID {steamid}."
+whitelist:
+  added: "Added {player} to the whitelist."
+  removed: "Removed {player} from the whitelist."
+access:
+  done: "Set {player} to {level}."
+teleport:
+  to_player: "Teleported {player} to {target}."
+  to_coords: "Teleported {player} to {x}, {y}, {z}."
+give:
+  item: "Gave {player} {item} × {count}."
+  xp: "Gave {player} {amount} XP in {perk}."
+  vehicle: "Spawned vehicle {script} near {player}."
+horde:
+  done: "Spawned a horde of {count} near {player}."
+player:
+  god: "Toggled godmode for {player}."
+  invisible: "Toggled invisibility for {player}."
+  noclip: "Toggled noclip for {player}."
+weather:
+  start_rain: "Started rain."
+  stop_rain: "Stopped rain."
+  thunder: "Triggered thunder."
+  chopper: "Triggered a helicopter event."
+  gunshot: "Triggered a gunshot event."

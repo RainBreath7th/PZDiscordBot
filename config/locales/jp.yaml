@@ -1,0 +1,86 @@
+error:
+  not_in_guild: "このコマンドは設定済みの Discord サーバーでのみ使えます。"
+  unknown_guild: "このサーバーは設定されていません。"
+  wrong_channel: "許可された運用チャンネルで実行してください。"
+  insufficient_tier: "権限が不足しています。"
+  restarting: "サーバー再起動中です。猶予は約 {seconds} 秒です。"
+  rcon_failed: "RCON の呼び出しに失敗しました：{detail}"
+  ambiguous_player: "プレイヤー名が複数該当します：{names}。完全なキャラ名を入力してください。"
+  unknown_player: "プレイヤー「{name}」が見つかりません。"
+  limit_exceeded: "{what} が範囲外です（{min}–{max}）。"
+  not_your_confirm: "これはあなたの確認ではありません。"
+  confirm_expired: "確認の期限が切れました。"
+  cancelled: "キャンセルしました。"
+  break_glass_required: "保護されたゲーム内 admin の変更には BreakGlass が必要です。"
+  not_configured: "設定が不完全です。"
+confirm:
+  title: "確認"
+  now: "直ちに告知・セーブのうえサーバーを停止します。"
+  kick: "{player} をキックします。理由：{reason}"
+  ban_user: "ユーザー {player} をBANします。"
+  ban_steamid: "SteamID {steamid} をBANします。"
+  unban_user: "ユーザー {player} のBANを解除します。"
+  unban_steamid: "SteamID {steamid} のBANを解除します。"
+  access: "{player} のゲーム内権限を {level} にします。"
+  whitelist_remove: "{player} をホワイトリストから削除します。"
+players:
+  title: "オンラインプレイヤー"
+  empty: "オンラインのプレイヤーはいません。"
+  count: "オンライン：{count}"
+  list: "名前：{names}"
+restart:
+  queued: "再起動をキューしました。無人になればセーブして終了します。タイムアウト {timeout} 秒。"
+  already_queued: "既にキューがあります：{name}（経過 {elapsed} 秒、残り {remaining} 秒）。"
+  cancelled_own: "あなたのキューをキャンセルしました。"
+  cancelled_other: "{name} のキューをキャンセルしました。"
+  cancel_denied: "自分のキュー以外はキャンセルできません。"
+  nothing_to_cancel: "キュー中の再起動はありません。"
+  status_idle: "キューはなく、再起動ウィンドウでもありません。"
+  status_queued: "キュー中：開始者 {name}、経過 {elapsed} 秒、残り {remaining} 秒。"
+  status_restarting: "サーバー再起動中。猶予残り {seconds} 秒。"
+  timeout: "キューがタイムアウトしたためキャンセルしました。サーバーは停止していません。"
+  rcon_failed_cancel: "キュー中に RCON が連続失敗したためキャンセルしました。サーバーは停止していません。"
+  save_failed: "セーブに失敗したため停止しませんでした：{detail}"
+  quit_failed: "終了コマンドに失敗しました。サーバーは稼働中の可能性があります：{detail}"
+  preempted: "あなたのキューは強制再起動に割り込まれました。"
+  executed: "セーブと終了を送信しました。Docker による再起動を待ちます。"
+  now_started: "強制再起動を開始しました。"
+  queued_ingame: "[PZ-Bot] 再起動がキューされました。無人後にセーブして終了します。"
+  executing_ingame: "[PZ-Bot] まもなくセーブしてサーバーを再起動します。"
+announce:
+  sent: "設定された GameLocale ごとにゲーム内告知を送りました。"
+save:
+  ok: "セーブしました。"
+  failed: "セーブに失敗しました：{detail}"
+kick:
+  done: "{player} をキックしました。"
+ban:
+  done_user: "{player} をBANしました。"
+  done_steamid: "SteamID {steamid} をBANしました。"
+unban:
+  done_user: "{player} のBANを解除しました。"
+  done_steamid: "SteamID {steamid} のBANを解除しました。"
+whitelist:
+  added: "{player} をホワイトリストに追加しました。"
+  removed: "{player} をホワイトリストから削除しました。"
+access:
+  done: "{player} を {level} に設定しました。"
+teleport:
+  to_player: "{player} を {target} へテレポートしました。"
+  to_coords: "{player} を {x}, {y}, {z} へテレポートしました。"
+give:
+  item: "{player} に {item} × {count} を渡しました。"
+  xp: "{player} の {perk} に XP {amount} を与えました。"
+  vehicle: "{player} の近くに車両 {script} を生成しました。"
+horde:
+  done: "{player} の近くに {count} 体のホーデを生成しました。"
+player:
+  god: "{player} のゴッドモードを切り替えました。"
+  invisible: "{player} の透明化を切り替えました。"
+  noclip: "{player} のノークリップを切り替えました。"
+weather:
+  start_rain: "雨を開始しました。"
+  stop_rain: "雨を止めました。"
+  thunder: "雷を発生させました。"
+  chopper: "ヘリイベントを発生させました。"
+  gunshot: "銃声イベントを発生させました。"

@@ -1,0 +1,44 @@
+# Bot-only compose. The PZ dedicated server is assumed to already exist.
+# Every connection coordinate is required — there is no default service or network name.
+#
+#   docker compose -f compose.bot.yaml up -d --build
+
+services:
+  pz-bot:
+    build: .
+    image: pz-bot:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?DISCORD_TOKEN is required}
+      RCON_HOST: ${RCON_HOST:?RCON_HOST is required}
+      RCON_PORT: ${RCON_PORT:?RCON_PORT is required}
+      RCON_PASSWORD: ${RCON_PASSWORD:?RCON_PASSWORD is required}
+      POLL_INTERVAL: ${POLL_INTERVAL:-30}
+      RESTART_TIMEOUT: ${RESTART_TIMEOUT:-7200}
+      RESTART_GRACE: ${RESTART_GRACE:-360}
+      RCON_FAIL_THRESHOLD: ${RCON_FAIL_THRESHOLD:-3}
+      EMPTY_CONFIRM_SECONDS: ${EMPTY_CONFIRM_SECONDS:-10}
+      RCON_TIMEOUT: ${RCON_TIMEOUT:-10}
+      CONFIG_DIR: /app/config
+      HEALTH_STATE_PATH: /tmp/pz-bot-health.json
+    volumes:
+      - ./config:/app/config
+    networks:
+      pz-net: {}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "python", "-m", "bot.health"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 360s
+
+networks:
+  pz-net:
+    external: true
+    name: ${BOT_NETWORK:?BOT_NETWORK is required}

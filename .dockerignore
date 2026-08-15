@@ -1,0 +1,14 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+.mypy_cache
+tests
+*.md
+.env
+.idea
+.vscode
+.gitignore
+.dockerignore
+compose.bot.yaml
+.env.example

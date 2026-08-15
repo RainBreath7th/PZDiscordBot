@@ -1,0 +1,9 @@
+# Independent locale lists. Discord embeds and in-game servermsg do not have to match.
+discord_locales:
+  - zh
+  - en
+  - jp
+game_locales:
+  - zh
+  - en
+  - jp

@@ -1,0 +1,12 @@
+item_count:
+  min: 1
+  max: 50
+xp:
+  min: 1
+  max: 100000
+vehicle: 1
+horde:
+  min: 1
+  max: 50
+servermsg_max_chars: 200
+confirm_timeout_seconds: 30

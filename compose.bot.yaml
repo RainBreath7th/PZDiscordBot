@@ -1,6 +1,6 @@
 # Topology: PZ dedicated server is already a Docker container on THIS host.
 #
-#   docker compose -f compose.bot.yaml up -d --build
+#   docker compose -f compose.bot.yaml up -d
 #
 # The bot joins the existing PZ compose network. RCON stays inside that
 # network — do not publish it to the host or the public internet.
@@ -19,8 +19,7 @@
 
 services:
   pz-bot:
-    build: .
-    image: pz-discord-bot:latest
+    image: rainbreath/pz-discord-bot:latest
     restart: unless-stopped
     env_file: .env
     environment:

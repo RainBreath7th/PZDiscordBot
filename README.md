@@ -8,7 +8,7 @@
 
 ## What this repo ships
 
-Only the bot. Pick **one** compose file for your topology — they all build `pz-discord-bot:latest` and start a single `pz-bot` service:
+Only the bot. Pick **one** compose file for your topology — they all build `rainbreath/pz-discord-bot:latest` and start a single `pz-bot` service:
 
 | Topology | File | `RCON_HOST` | `BOT_NETWORK` |
 |---|---|---|---|
@@ -37,7 +37,7 @@ The game server itself is not in this repo.
 | Config | [PyYAML](https://pyyaml.org/) | **≥ 6.0.1** | `config/permissions.yaml` / `i18n.yaml` / `limits.yaml` + `mtime` hot-reload with last-good fallback |
 | i18n | Custom `Translator` + `servermsg` splitter | `discord_locales` / `game_locales` independent; `servermsg_max_chars` (default 200) | One Discord reply shows N locales as Embed fields; in-game messages are sent sequentially per locale |
 | Queue | In-memory global `RestartQueue` | `POLL_INTERVAL` 30s, `EMPTY_CONFIRM_SECONDS` 10s (double-zero), `RESTART_TIMEOUT` 7200s, `RESTART_GRACE` 360s | Single lock for one PZ server; `save` failure never `quit`s; `RestartingWindow` gates all but `/restart status` |
-| Container | Docker + Compose | three bot-only files (`pz-bot` service, `image: pz-discord-bot:latest`, `restart: unless-stopped`, `json-file` 10m×5, `HEALTHCHECK python -m bot.health`): [compose.bot.yaml](compose.bot.yaml) joins the existing PZ network; [compose.bot.remote.yaml](compose.bot.remote.yaml) / [compose.bot.native.yaml](compose.bot.native.yaml) reach RCON over the host/LAN | Game process does the real restart; bot never mounts `docker.sock` and never publishes RCON |
+| Container | Docker + Compose | three bot-only files (`pz-bot` service, `image: rainbreath/pz-discord-bot:latest`, `restart: unless-stopped`, `json-file` 10m×5, `HEALTHCHECK python -m bot.health`): [compose.bot.yaml](compose.bot.yaml) joins the existing PZ network; [compose.bot.remote.yaml](compose.bot.remote.yaml) / [compose.bot.native.yaml](compose.bot.native.yaml) reach RCON over the host/LAN | Game process does the real restart; bot never mounts `docker.sock` and never publishes RCON |
 | Tests | [pytest](https://pytest.org/) + pytest-asyncio | `pytest ≥ 8`, `asyncio_mode = auto` | Tier matrix, hot-reload, `players` parsing, queue state machine |
 
 Decision rationale lives in [PZ_Discord_Bot_Tech_Selection.md](PZ_Discord_Bot_Tech_Selection.md).

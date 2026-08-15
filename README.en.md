@@ -59,7 +59,7 @@ Other languages: [中文](README.zh.md) · [日本語](README.jp.md) · [Entry](
 
    ```bash
    # Same-host Docker (most common)
-   docker compose -f compose.bot.yaml up -d --build
+   docker compose -f compose.bot.yaml up -d
    docker compose -f compose.bot.yaml logs -f pz-bot
 
    # Remote Docker:   -f compose.bot.remote.yaml
@@ -356,7 +356,7 @@ confirm_timeout_seconds: 30
 
 ## 6. Deployment
 
-This repo ships **only the bot**. The game server is assumed to already be running somewhere — a Docker container or a native process. Three compose files cover three topologies. **Start only one of them.** The service is always `pz-bot`; the image is always `pz-discord-bot:latest`.
+This repo ships **only the bot**. The game server is assumed to already be running somewhere — a Docker container or a native process. Three compose files cover three topologies. **Start only one of them.** The service is always `pz-bot`; the image is always `rainbreath/pz-discord-bot:latest`.
 
 | Your setup | File | What to put in `RCON_HOST` | Need `BOT_NETWORK`? |
 |---|---|---|---|
@@ -418,7 +418,7 @@ cp .env.example .env
 **Step 3 — Start**
 
 ```bash
-docker compose -f compose.bot.yaml up -d --build
+docker compose -f compose.bot.yaml up -d
 docker compose -f compose.bot.yaml logs -f pz-bot
 # Look for "synced slash commands" and "bot ready"
 ```
@@ -458,7 +458,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK can stay empty
 
-docker compose -f compose.bot.remote.yaml up -d --build
+docker compose -f compose.bot.remote.yaml up -d
 docker compose -f compose.bot.remote.yaml logs -f pz-bot
 ```
 
@@ -500,7 +500,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK can stay empty
 
-docker compose -f compose.bot.native.yaml up -d --build
+docker compose -f compose.bot.native.yaml up -d
 docker compose -f compose.bot.native.yaml logs -f pz-bot
 ```
 

@@ -1,7 +1,7 @@
 # Topology: PZ dedicated server is NOT a Docker container.
 # It is a native process on this machine (or another host — see RCON_HOST).
 #
-#   docker compose -f compose.bot.native.yaml up -d --build
+#   docker compose -f compose.bot.native.yaml up -d
 #
 # There is no PZ Docker network to join. The bot container reaches RCON
 # through the host. BOT_NETWORK is not used.
@@ -33,8 +33,7 @@
 
 services:
   pz-bot:
-    build: .
-    image: pz-discord-bot:latest
+    image: rainbreath/pz-discord-bot:latest
     restart: unless-stopped
     env_file: .env
     extra_hosts:

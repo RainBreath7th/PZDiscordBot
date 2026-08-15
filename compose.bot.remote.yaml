@@ -1,6 +1,6 @@
 # Topology: PZ dedicated server is a Docker container on a DIFFERENT machine.
 #
-#   docker compose -f compose.bot.remote.yaml up -d --build
+#   docker compose -f compose.bot.remote.yaml up -d
 #
 # The bot cannot join the other host's Docker network, so it reaches RCON
 # over the LAN. BOT_NETWORK is not used (the Python process never reads it).
@@ -30,8 +30,7 @@
 
 services:
   pz-bot:
-    build: .
-    image: pz-discord-bot:latest
+    image: rainbreath/pz-discord-bot:latest
     restart: unless-stopped
     env_file: .env
     environment:

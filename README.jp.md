@@ -59,7 +59,7 @@
 
    ```bash
    # 同一ホスト Docker（いちばん多い構成です）
-   docker compose -f compose.bot.yaml up -d --build
+   docker compose -f compose.bot.yaml up -d
    docker compose -f compose.bot.yaml logs -f pz-bot
 
    # 別ホスト Docker：     -f compose.bot.remote.yaml
@@ -356,7 +356,7 @@ confirm_timeout_seconds: 30
 
 ## 6. デプロイ
 
-このリポジトリで提供するのは **Bot のみ**です。ゲームサーバーはどこかですでに稼働していることが前提です（Docker コンテナでも、素のプロセスでも構いません）。compose ファイルはトポロジごとに 3 つあります。**同時に起動するのは 1 つだけ**にしてください。サービス名はいずれも `pz-bot`、イメージはいずれも `pz-discord-bot:latest` です。
+このリポジトリで提供するのは **Bot のみ**です。ゲームサーバーはどこかですでに稼働していることが前提です（Docker コンテナでも、素のプロセスでも構いません）。compose ファイルはトポロジごとに 3 つあります。**同時に起動するのは 1 つだけ**にしてください。サービス名はいずれも `pz-bot`、イメージはいずれも `rainbreath/pz-discord-bot:latest` です。
 
 | 構成 | 使うファイル | `RCON_HOST` に書くもの | `BOT_NETWORK` |
 |---|---|---|---|
@@ -418,7 +418,7 @@ cp .env.example .env
 **Step 3 — 起動します**
 
 ```bash
-docker compose -f compose.bot.yaml up -d --build
+docker compose -f compose.bot.yaml up -d
 docker compose -f compose.bot.yaml logs -f pz-bot
 # "synced slash commands" と "bot ready" が表示されれば成功です
 ```
@@ -458,7 +458,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK は空欄で構いません
 
-docker compose -f compose.bot.remote.yaml up -d --build
+docker compose -f compose.bot.remote.yaml up -d
 docker compose -f compose.bot.remote.yaml logs -f pz-bot
 ```
 
@@ -500,7 +500,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK は空欄で構いません
 
-docker compose -f compose.bot.native.yaml up -d --build
+docker compose -f compose.bot.native.yaml up -d
 docker compose -f compose.bot.native.yaml logs -f pz-bot
 ```
 

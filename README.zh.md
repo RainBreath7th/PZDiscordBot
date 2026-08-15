@@ -59,7 +59,7 @@
 
    ```bash
    # 同机 Docker（最常见）
-   docker compose -f compose.bot.yaml up -d --build
+   docker compose -f compose.bot.yaml up -d
    docker compose -f compose.bot.yaml logs -f pz-bot
 
    # 跨机 Docker：     -f compose.bot.remote.yaml
@@ -358,7 +358,7 @@ confirm_timeout_seconds: 30
 
 ## 6. 部署
 
-本仓库只交付 **Bot**。游戏服假定已经在某台机器上跑着——可能是 Docker 容器，也可能是裸进程。三个 compose 文件对应三种拓扑，**一次只起其中一个**，服务名都是 `pz-bot`，镜像都是 `pz-discord-bot:latest`。
+本仓库只交付 **Bot**。游戏服假定已经在某台机器上跑着——可能是 Docker 容器，也可能是裸进程。三个 compose 文件对应三种拓扑，**一次只起其中一个**，服务名都是 `pz-bot`，镜像都是 `rainbreath/pz-discord-bot:latest`。
 
 | 你的情况 | 用哪个文件 | `RCON_HOST` 填什么 | 要不要 `BOT_NETWORK` |
 |---|---|---|---|
@@ -420,7 +420,7 @@ cp .env.example .env
 **第 3 步：启动**
 
 ```bash
-docker compose -f compose.bot.yaml up -d --build
+docker compose -f compose.bot.yaml up -d
 docker compose -f compose.bot.yaml logs -f pz-bot
 # 看到 "synced slash commands" 和 "bot ready" 即成功
 ```
@@ -460,7 +460,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK 可以留空
 
-docker compose -f compose.bot.remote.yaml up -d --build
+docker compose -f compose.bot.remote.yaml up -d
 docker compose -f compose.bot.remote.yaml logs -f pz-bot
 ```
 
@@ -503,7 +503,7 @@ cp .env.example .env
 #   RCON_PASSWORD=...
 #   BOT_NETWORK 可以留空
 
-docker compose -f compose.bot.native.yaml up -d --build
+docker compose -f compose.bot.native.yaml up -d
 docker compose -f compose.bot.native.yaml logs -f pz-bot
 ```
 

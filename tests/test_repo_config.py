@@ -23,7 +23,7 @@ def _load_compose(name: str) -> dict:
 
 
 def _assert_shared_bot_service(service: dict) -> None:
-    assert service["image"] == "pz-discord-bot:latest"
+    assert service["image"] == "rainbreath/pz-discord-bot:latest"
     assert service["restart"] == "unless-stopped"
     env = service["environment"]
     for key in ("DISCORD_TOKEN", "RCON_HOST", "RCON_PORT", "RCON_PASSWORD"):

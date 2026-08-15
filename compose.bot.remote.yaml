@@ -1,0 +1,62 @@
+# Topology: PZ dedicated server is a Docker container on a DIFFERENT machine.
+#
+#   docker compose -f compose.bot.remote.yaml up -d --build
+#
+# The bot cannot join the other host's Docker network, so it reaches RCON
+# over the LAN. BOT_NETWORK is not used (the Python process never reads it).
+#
+# Required in .env:
+#   DISCORD_TOKEN, RCON_HOST, RCON_PORT, RCON_PASSWORD
+#
+# RCON_HOST = the PZ *host's LAN IP* (e.g. 10.0.0.5), never a Docker service
+#             name and never a public IP if you can avoid it.
+# RCON_PORT = the port published on that host (see "On the PZ host" below).
+#
+# On the PZ host you MUST publish RCON, but only to the LAN:
+#
+#   # fragment of the *existing* pz-server compose, not this repo
+#   ports:
+#     - "10.0.0.5:27015:27015"    # host-LAN:host-port:container-port
+#   # Do NOT write "27015:27015" (that binds 0.0.0.0).
+#   # Firewall: allow TCP 27015 only from the bot host.
+#
+# Restart still works the same way: this bot sends servermsg → save → quit;
+# the PZ container's own `restart: unless-stopped` brings the process back.
+# This bot never mounts docker.sock, on either machine.
+#
+# Other topologies:
+#   compose.bot.yaml         — PZ container on the same host (preferred)
+#   compose.bot.native.yaml  — PZ is not in Docker at all
+
+services:
+  pz-bot:
+    build: .
+    image: pz-discord-bot:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?DISCORD_TOKEN is required}
+      RCON_HOST: ${RCON_HOST:?RCON_HOST is required}
+      RCON_PORT: ${RCON_PORT:?RCON_PORT is required}
+      RCON_PASSWORD: ${RCON_PASSWORD:?RCON_PASSWORD is required}
+      POLL_INTERVAL: ${POLL_INTERVAL:-30}
+      RESTART_TIMEOUT: ${RESTART_TIMEOUT:-7200}
+      RESTART_GRACE: ${RESTART_GRACE:-360}
+      RCON_FAIL_THRESHOLD: ${RCON_FAIL_THRESHOLD:-3}
+      EMPTY_CONFIRM_SECONDS: ${EMPTY_CONFIRM_SECONDS:-10}
+      RCON_TIMEOUT: ${RCON_TIMEOUT:-10}
+      CONFIG_DIR: /app/config
+      HEALTH_STATE_PATH: /tmp/pz-bot-health.json
+    volumes:
+      - ./config:/app/config
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "python", "-m", "bot.health"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 360s

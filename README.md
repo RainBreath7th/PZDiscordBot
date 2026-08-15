@@ -1,61 +1,43 @@
 # PZ Discord Bot
 
-A Discord management bot for one Project Zomboid dedicated server. Semantic slash commands talk Source RCON.
+> Manage one Project Zomboid dedicated server from Discord. Slash commands only, no `/raw`, no Docker socket.
 
-Other languages: [中文](README.zh.md) · [日本語](README.jp.md)
+- **中文**：[README.zh.md](README.zh.md) — 完整说明、手把手申请与部署、每条命令的参数表
+- **English**：[README.en.md](README.en.md) — Full guide, step-by-step bot setup, per-command tables
+- **日本語**：[README.jp.md](README.jp.md) — 完全ガイド、Bot 作成手順、コマンド一覧
 
-## What it does
+## What this repo ships
 
-- `/players` — who is online
-- `/restart queue|cancel|status|now` — empty-server queued restart or a forced restart
-- Admin commands: `/announce` `/save` `/kick` `/ban` `/unban` `/whitelist` `/access` `/teleport` `/give` `/horde` `/player` `/weather`
-- Bringing the game process back is **the existing PZ container's** `restart: unless-stopped`. The bot only sends `servermsg` → `save` → `quit`.
+Only the bot. Pick **one** compose file for your topology — they all build `pz-discord-bot:latest` and start a single `pz-bot` service:
 
-## Three Tiers
+| Topology | File | `RCON_HOST` | `BOT_NETWORK` |
+|---|---|---|---|
+| PZ is a container on **this** host | [compose.bot.yaml](compose.bot.yaml) | PZ compose service name | required |
+| PZ is a container on **another** host | [compose.bot.remote.yaml](compose.bot.remote.yaml) | PZ host LAN IP | unused |
+| PZ is **not** in Docker | [compose.bot.native.yaml](compose.bot.native.yaml) | `host.docker.internal` or a LAN IP | unused |
 
-Configured in `config/permissions.yaml`, keyed by Discord `guild_id`. Roles are snowflake IDs.
+Or run the process directly: `python -m bot` (see the language-specific READMEs).
 
-| Tier | Who | Default commands |
-|---|---|---|
-| A | `admin_role_ids` | Full catalog; may cancel anyone's queue |
-| B | `member_role_ids` (PZ member role) | `/players` + `/restart queue\|status`; cancel-own only |
-| C | everyone else | `/players` only |
+The game server itself is not in this repo.
 
-`command_min_tier` can lower a single command to B or C. Guilds missing from the file never receive slash commands. DMs are disabled.
+## Quick links
 
-## Deploy
+- Commands & permissions → see the language READMEs above. Every command is listed in a table with parameters, purpose, default tier, visibility, and whether it needs confirmation.
+- `guild_id` / role IDs → how to copy them and a copy-pasteable [`config/permissions.yaml`](config/permissions.yaml) example are in each README.
+- Discord bot setup → [README.zh.md §1](README.zh.md#1-discord-机器人申请与邀请手把手) / [README.en.md §1](README.en.md#1-create-and-invite-the-discord-bot-step-by-step) / [README.jp.md §1](README.jp.md#1-discord-bot-の作成と招待手順どおり) (Developer Portal → Bot → Token → OAuth2 invite URL).
+- Deploy topologies → [README.zh.md §6](README.zh.md#6-部署) / [README.en.md §6](README.en.md#6-deployment) / [README.jp.md §6](README.jp.md#6-デプロイ) (same-host Docker / remote Docker / native PZ).
 
-This repo ships only the `pz-bot` image and `compose.bot.yaml`. The game server must already sit on a Docker network.
+## Tech stack
 
-1. Copy `.env.example` to `.env` and set:
-   - `DISCORD_TOKEN`
-   - `RCON_HOST` / `RCON_PORT` / `RCON_PASSWORD` (no defaults — use your existing PZ service name and port)
-   - `BOT_NETWORK` (the **external** network that already contains pz-server)
-2. Edit `config/permissions.yaml`: replace the `000…` placeholders with a real `guild_id` and role IDs.
-3. Adjust `config/i18n.yaml` (`discord_locales` and `game_locales` are independent) and `config/limits.yaml` as needed.
-4. Start:
+| Layer | Choice | Version / detail | Why |
+|---|---|---|---|
+| Runtime | Python | **3.12** (`python:3.12-slim` in [Dockerfile](Dockerfile)) | Lean image, no build stage needed; matches `PZ_Discord_Bot_Tech_Selection.md` |
+| Discord | [discord.py](https://github.com/Rapptz/discord.py) | **≥ 2.7** (`discord.ext.tasks` for the empty-server poll, `app_commands` + `GroupCog` for slash) | Background queue is a first-class citizen; richer than hikari/pycord for this ops bot |
+| RCON | [rcon](https://github.com/conqp/rcon) (async Source RCON) | **≥ 2.4.9** (`rcon.source.rcon` async + thin wrapper in `bot/rcon_client.py`) | Async-native so slash handlers can `defer` then `await` without blocking the gateway; `zomboid-rcon` is only used as a command-name reference |
+| Config | [PyYAML](https://pyyaml.org/) | **≥ 6.0.1** | `config/permissions.yaml` / `i18n.yaml` / `limits.yaml` + `mtime` hot-reload with last-good fallback |
+| i18n | Custom `Translator` + `servermsg` splitter | `discord_locales` / `game_locales` independent; `servermsg_max_chars` (default 200) | One Discord reply shows N locales as Embed fields; in-game messages are sent sequentially per locale |
+| Queue | In-memory global `RestartQueue` | `POLL_INTERVAL` 30s, `EMPTY_CONFIRM_SECONDS` 10s (double-zero), `RESTART_TIMEOUT` 7200s, `RESTART_GRACE` 360s | Single lock for one PZ server; `save` failure never `quit`s; `RestartingWindow` gates all but `/restart status` |
+| Container | Docker + Compose | three bot-only files (`pz-bot` service, `image: pz-discord-bot:latest`, `restart: unless-stopped`, `json-file` 10m×5, `HEALTHCHECK python -m bot.health`): [compose.bot.yaml](compose.bot.yaml) joins the existing PZ network; [compose.bot.remote.yaml](compose.bot.remote.yaml) / [compose.bot.native.yaml](compose.bot.native.yaml) reach RCON over the host/LAN | Game process does the real restart; bot never mounts `docker.sock` and never publishes RCON |
+| Tests | [pytest](https://pytest.org/) + pytest-asyncio | `pytest ≥ 8`, `asyncio_mode = auto` | Tier matrix, hot-reload, `players` parsing, queue state machine |
 
-```bash
-docker compose -f compose.bot.yaml up -d --build
-```
-
-Invite the bot with `bot` + `applications.commands`. After adding a guild, edit the yaml and `docker compose -f compose.bot.yaml restart pz-bot` (slash sync happens at startup only).
-
-## Runtime
-
-- Secrets stay in environment variables. `./config` is bind-mounted; yaml edits do not require a rebuild.
-- Role maps / min tiers / channel allow-lists hot-reload. A bad file keeps the last-good config.
-- The RestartQueue is in-memory. Timeout (default 7200s) cancels and never `quit`s. `RESTART_GRACE` defaults to 360s.
-- Healthcheck: healthy if RCON answers **or** the bot is inside the planned RestartingWindow. `unhealthy` does not kill the container.
-- Logs: `json-file`, `10m × 5`.
-
-## Local development
-
-```bash
-python -m venv .venv
-source .venv/Scripts/activate   # Windows Git Bash
-pip install -r requirements-dev.txt
-pytest
-```
-
-Code and comments are English. Domain terms live in [CONTEXT.md](CONTEXT.md).
+Decision rationale lives in [PZ_Discord_Bot_Tech_Selection.md](PZ_Discord_Bot_Tech_Selection.md).

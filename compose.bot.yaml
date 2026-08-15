@@ -1,12 +1,26 @@
-# Bot-only compose. The PZ dedicated server is assumed to already exist.
-# Every connection coordinate is required — there is no default service or network name.
+# Topology: PZ dedicated server is already a Docker container on THIS host.
 #
 #   docker compose -f compose.bot.yaml up -d --build
+#
+# The bot joins the existing PZ compose network. RCON stays inside that
+# network — do not publish it to the host or the public internet.
+#
+# Required in .env:
+#   DISCORD_TOKEN, RCON_HOST, RCON_PORT, RCON_PASSWORD, BOT_NETWORK
+#
+# RCON_HOST  = the PZ compose *service name* (e.g. pz-server), never localhost
+# BOT_NETWORK = `docker inspect <pz-container> --format '{{json .NetworkSettings.Networks}}'`
+#
+# Other topologies:
+#   compose.bot.remote.yaml  — PZ container lives on a different machine
+#   compose.bot.native.yaml  — PZ is a bare-metal / non-Docker process
+#
+# This file does not start a game server and does not mount docker.sock.
 
 services:
   pz-bot:
     build: .
-    image: pz-bot:latest
+    image: pz-discord-bot:latest
     restart: unless-stopped
     env_file: .env
     environment:

@@ -1,0 +1,70 @@
+# Topology: PZ dedicated server is NOT a Docker container.
+# It is a native process on this machine (or another host — see RCON_HOST).
+#
+#   docker compose -f compose.bot.native.yaml up -d --build
+#
+# There is no PZ Docker network to join. The bot container reaches RCON
+# through the host. BOT_NETWORK is not used.
+#
+# Required in .env:
+#   DISCORD_TOKEN, RCON_HOST, RCON_PORT, RCON_PASSWORD
+#
+# RCON_HOST:
+#   same machine as this bot  →  host.docker.internal
+#   PZ on a different machine →  that machine's LAN IP
+#                                (same network path as compose.bot.remote.yaml)
+#
+# Important: a container cannot see the host's 127.0.0.1.
+# If PZ binds RCON to 127.0.0.1 only, this file will fail with host.docker.internal.
+# Fix one of:
+#   1. Bind PZ RCON to 0.0.0.0 (or the LAN NIC) and firewall it to the
+#      Docker bridge / the bot host. Then use host.docker.internal.
+#   2. On Linux only, switch this service to host networking (commented
+#      below) and set RCON_HOST=127.0.0.1. Docker Desktop for
+#      Windows/macOS does not offer real host networking.
+#
+# Restart: this bot still only sends servermsg → save → quit. Something
+# *outside* this repo must bring the native PZ process back (systemd,
+# a watchdog script, the official PZ service). The bot will not do it.
+#
+# Other topologies:
+#   compose.bot.yaml         — PZ container on the same host
+#   compose.bot.remote.yaml  — PZ container on a different host
+
+services:
+  pz-bot:
+    build: .
+    image: pz-discord-bot:latest
+    restart: unless-stopped
+    env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:?DISCORD_TOKEN is required}
+      RCON_HOST: ${RCON_HOST:?RCON_HOST is required}
+      RCON_PORT: ${RCON_PORT:?RCON_PORT is required}
+      RCON_PASSWORD: ${RCON_PASSWORD:?RCON_PASSWORD is required}
+      POLL_INTERVAL: ${POLL_INTERVAL:-30}
+      RESTART_TIMEOUT: ${RESTART_TIMEOUT:-7200}
+      RESTART_GRACE: ${RESTART_GRACE:-360}
+      RCON_FAIL_THRESHOLD: ${RCON_FAIL_THRESHOLD:-3}
+      EMPTY_CONFIRM_SECONDS: ${EMPTY_CONFIRM_SECONDS:-10}
+      RCON_TIMEOUT: ${RCON_TIMEOUT:-10}
+      CONFIG_DIR: /app/config
+      HEALTH_STATE_PATH: /tmp/pz-bot-health.json
+    volumes:
+      - ./config:/app/config
+    # Linux-only alternative when PZ RCON listens on 127.0.0.1:
+    # network_mode: host
+    # (then set RCON_HOST=127.0.0.1 and remove extra_hosts)
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "python", "-m", "bot.health"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 360s
